@@ -1,0 +1,15 @@
+services:
+  watchdog:
+    build: ./app
+    restart: unless-stopped
+    network_mode: host        # must sit on the real LAN to ARP-scan it (Linux host only)
+    cap_add:
+      - NET_RAW               # needed to send raw ARP packets
+    environment:
+      ALERT_WEBHOOK_URL: ${ALERT_WEBHOOK_URL:-}
+      ALERT_COOLDOWN_SECONDS: ${ALERT_COOLDOWN_SECONDS:-300}
+      SCAN_INTERVAL_SECONDS: ${SCAN_INTERVAL_SECONDS:-120}
+      SCAN_INTERFACE: ${SCAN_INTERFACE:-}
+      DASHBOARD_PORT: ${DASHBOARD_PORT:-8088}
+    volumes:
+      - ./data:/data          # devices.json + events.jsonl live here so you can inspect them
